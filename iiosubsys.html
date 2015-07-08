@@ -1,0 +1,127 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 2. Industrial I/O core</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="index.html" title="Industrial I/O driver developer's guide"><link rel="prev" href="intro.html" title="Chapter 1. Introduction"><link rel="next" href="API-struct-iio-dev.html" title="struct iio_dev"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 2. Industrial I/O core</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="intro.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="API-struct-iio-dev.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="iiosubsys"></a>Chapter 2. Industrial I/O core</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="iiosubsys.html#iiodevice"> Industrial I/O devices </a></span></dt><dd><dl><dt><span class="sect2"><a href="iiosubsys.html#iioattr"> IIO device sysfs interface </a></span></dt><dt><span class="sect2"><a href="iiosubsys.html#iiochannel"> IIO device channels </a></span></dt></dl></dd><dt><span class="sect1"><a href="iiobuffer.html"> Industrial I/O buffers </a></span></dt><dd><dl><dt><span class="sect2"><a href="iiobuffer.html#iiobuffersysfs">IIO buffer sysfs interface </a></span></dt><dt><span class="sect2"><a href="iiobuffer.html#iiobuffersetup"> IIO buffer setup </a></span></dt></dl></dd><dt><span class="sect1"><a href="iiotrigger.html"> Industrial I/O triggers  </a></span></dt><dd><dl><dt><span class="sect2"><a href="iiotrigger.html#iiotrigsysfs"> IIO trigger sysfs interface </a></span></dt><dt><span class="sect2"><a href="iiotrigger.html#iiotrigattr"> IIO trigger setup</a></span></dt><dt><span class="sect2"><a href="iiotrigger.html#iiotrigsetup"> IIO trigger ops</a></span></dt></dl></dd><dt><span class="sect1"><a href="iiotriggered_buffer.html"> Industrial I/O triggered buffers </a></span></dt><dd><dl><dt><span class="sect2"><a href="iiotriggered_buffer.html#iiotrigbufsetup"> IIO triggered buffer setup</a></span></dt></dl></dd></dl></div><p>
+      The Industrial I/O core offers:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+         a unified framework for writing drivers for many different types of
+         embedded sensors.
+        </li><li class="listitem">
+         a standard interface to user space applications manipulating sensors.
+        </li></ul></div><p>
+      The implementation can be found under <code class="filename">
+      drivers/iio/industrialio-*</code>
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="iiodevice"></a> Industrial I/O devices </h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="refentrytitle"><a href="API-struct-iio-dev.html"><span class="phrase">struct iio_dev</span></a></span><span class="refpurpose"> — 
+  industrial I/O device
+ </span></dt><dt><span class="refentrytitle"><a href="API-iio-device-alloc.html"><span class="phrase">iio_device_alloc</span></a></span><span class="refpurpose"> — 
+  allocate an iio_dev from a driver
+ </span></dt><dt><span class="refentrytitle"><a href="API-iio-device-free.html"><span class="phrase">iio_device_free</span></a></span><span class="refpurpose"> — 
+  free an iio_dev from a driver
+ </span></dt><dt><span class="refentrytitle"><a href="API-iio-device-register.html"><span class="phrase">iio_device_register</span></a></span><span class="refpurpose"> — 
+  register a device with the IIO subsystem
+ </span></dt><dt><span class="refentrytitle"><a href="API-iio-device-unregister.html"><span class="phrase">iio_device_unregister</span></a></span><span class="refpurpose"> — 
+  unregister a device from the IIO subsystem
+ </span></dt><dt><span class="sect2"><a href="iiosubsys.html#iioattr"> IIO device sysfs interface </a></span></dt><dt><span class="sect2"><a href="iiosubsys.html#iiochannel"> IIO device channels </a></span></dt></dl></div><p>
+      An IIO device usually corresponds to a single hardware sensor and it
+      provides all the information needed by a driver handling a device.
+      Let's first have a look at the functionality embedded in an IIO
+      device then we will show how a device driver makes use of an IIO
+      device.
+    </p><p>
+        There are two ways for a user space application to interact
+        with an IIO driver.
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/</code>, this
+          represents a hardware sensor and groups together the data
+          channels of the same chip.
+        </li><li class="listitem"><code class="filename">/dev/iio:deviceX</code>, character device node
+          interface used for faster data transfer and for events information
+          retrieval.
+        </li></ul></div><p>
+    </p>
+    A typical IIO driver will register itself as an I2C or SPI driver and will
+    create two routines, <code class="function"> probe </code> and <code class="function"> remove
+    </code>. At <code class="function">probe</code>:
+    <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">call <code class="function">iio_device_alloc</code>, which allocates memory
+      for an IIO device.
+    </li><li class="listitem"> initialize IIO device fields with driver specific information
+              (e.g. device name, device channels).
+    </li><li class="listitem">call <code class="function"> iio_device_register</code>, this registers the
+      device with the IIO core. After this call the device is ready to accept
+      requests from user space applications.
+    </li></ul></div>
+      At <code class="function">remove</code>, we free the resources allocated in
+      <code class="function">probe</code> in reverse order:
+    <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="function">iio_device_unregister</code>, unregister the device
+      from the IIO core.
+    </li><li class="listitem"><code class="function">iio_device_free</code>, free the memory allocated
+      for the IIO device.
+    </li></ul></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iioattr"></a> IIO device sysfs interface </h3></div></div></div><p>
+        Attributes are sysfs files used to expose chip info and also allowing
+        applications to set various configuration parameters. Common
+        attributes are:
+        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/name</code>,
+          description of the physical chip for device X.
+          </li><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/dev</code>,
+            shows the major:minor pair associated with
+            /dev/iio:deviceX node.
+          </li><li class="listitem"><code class="filename">/sys/bus/iio:deviceX/sampling_frequency_available
+          </code> available discrete set of sampling frequency values
+          for device X.
+          </li></ul></div><p>
+      Available standard attributes for IIO devices are described in the
+      <code class="filename">Documentation/ABI/testing/sysfs-bus-iio </code> file
+      in the Linux kernel sources.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiochannel"></a> IIO device channels </h3></div></div></div><div class="toc"><dl class="toc"><dt><span class="refentrytitle"><a href="API-struct-iio-chan-spec.html"><span class="phrase">struct iio_chan_spec</span></a></span><span class="refpurpose"> — 
+  specification of a single channel
+ </span></dt></dl></div><p>
+        An IIO device channel is a representation of a data channel. An
+        IIO device can have one or multiple channels. For example:
+        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          a thermometer sensor has one channel representing the
+          temperature measurement.
+          </li><li class="listitem">
+          a light sensor has two channels indicating the measurements in
+          the visible and infrared spectrum.
+          </li><li class="listitem">
+          an accelerometer can have up two 3 channels representing
+          acceleration on X, Y and Z axes.
+          </li></ul></div><p>
+      An IIO channel is described by the <span class="type"> struct iio_chan_spec
+      </span>. A thermometer driver for the temperature sensor in the
+      example above would have to describe its channel as follows:
+      </p><pre class="programlisting">
+      static const struct iio_chan_spec temp_channel[] = {
+          {
+              .type = IIO_TEMP,
+              .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+          },
+      };
+      </pre><p>
+
+      When there are multiple channels per device we need to set the <span class="type">
+      .modified </span> field of <span class="type">iio_chan_spec</span> to 1. For example,
+      a light sensor can have two channels one, for infrared light and one for
+      both infrared and visible light.
+      </p><pre class="programlisting">
+      static const struct iio_chan_spec light_channels[] = {
+          {
+              .type = IIO_INTENSITY,
+              .modified = 1,
+              .channel2 = IIO_MOD_LIGHT_IR,
+              .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+              .info_mask_shared = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+          },
+          {
+              .type = IIO_INTENSITY,
+              .modified = 1,
+              .channel2 = IIO_MOD_LIGHT_BOTH,
+              .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+              .info_mask_shared = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+          },
+      }
+      </pre><p>
+
+      This channel's definition will generate two separate sysfs files
+      for raw data retrieval:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_intensity_ir_raw</code></li><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_intensity_both_raw</code></li></ul></div><p>
+      and one shared sysfs file for sampling frequency:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_intensity_sampling_frequency.
+      </code></li></ul></div><p>
+      </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="intro.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="API-struct-iio-dev.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. Introduction </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">struct iio_dev</span></td></tr></table></div></body></html>

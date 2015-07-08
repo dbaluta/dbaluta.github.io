@@ -1,0 +1,40 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 1. Introduction</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="index.html" title="Industrial I/O driver developer's guide"><link rel="prev" href="index.html" title="Industrial I/O driver developer's guide"><link rel="next" href="iiosubsys.html" title="Chapter 2. Industrial I/O core"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 1. Introduction</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="iiosubsys.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="intro"></a>Chapter 1. Introduction</h1></div></div></div><p>
+      The main purpose of the Industrial I/O subsystem (IIO) is to provide
+      support for devices that in some sense are analog to digital converts
+      (ADCs). As many actual devices combine some ADCs with digital to analog
+      converters (DACs), that functionality is also supported. The aim is to
+      fill the gap between the somewhat similar hwmon and input subsystems.
+      Hwmon is very much directed at low sample rate sensors used in
+      applications such as fan speed control and temperature measurement. Input
+      is, as its name suggests, focused on human interaction input devices
+      (keyboard, mouse, touchscreen). In some cases there is considerable
+      overlap between these and IIO.
+  </p><p>
+    Devices that fall into this category are:
+
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+        analog to digital converters (ADCs)
+      </li><li class="listitem">
+        accelerometers
+      </li><li class="listitem">
+        capacitance to digital converters (CDCs)
+      </li><li class="listitem">
+        digital to analog converters (DACs)
+      </li><li class="listitem">
+        gyroscopes
+      </li><li class="listitem">
+        inertial measurement units (IMUs)
+      </li><li class="listitem">
+        color and light sensors
+      </li><li class="listitem">
+        magnetometers
+      </li><li class="listitem">
+        pressure sensors
+      </li><li class="listitem">
+        proximity sensors
+      </li><li class="listitem">
+        temperature sensors
+      </li></ul></div><p>
+    Usually these sensors are connected via SPI or I2C. It is also a common
+    use case to have combo functionality (e.g. light plus proximity sensor).
+  </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="iiosubsys.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Industrial I/O driver developer's guide  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 2. Industrial I/O core</td></tr></table></div></body></html>

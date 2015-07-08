@@ -1,0 +1,22 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>struct iio_buffer_setup_ops</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="iiotriggered_buffer.html#iiotrigbufsetup" title="IIO triggered buffer setup"><link rel="prev" href="API-iio-triggered-buffer-cleanup.html" title="iio_triggered_buffer_cleanup"><link rel="next" href="iioresources.html" title="Chapter 3.  Resources"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><span class="phrase">struct iio_buffer_setup_ops</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="API-iio-triggered-buffer-cleanup.html">Prev</a> </td><th width="60%" align="center"> IIO triggered buffer setup</th><td width="20%" align="right"> <a accesskey="n" href="iioresources.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="API-struct-iio-buffer-setup-ops"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>struct iio_buffer_setup_ops — 
+  buffer setup related callbacks
+ </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><pre class="programlisting">
+struct iio_buffer_setup_ops {
+  int (* preenable) (struct iio_dev *);
+  int (* postenable) (struct iio_dev *);
+  int (* predisable) (struct iio_dev *);
+  int (* postdisable) (struct iio_dev *);
+  bool (* validate_scan_mask) (struct iio_dev *indio_dev,const unsigned long *scan_mask);
+};  </pre></div><div class="refsect1"><a name="idp59360400"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">preenable</span></dt><dd><p>
+[DRIVER] function to run prior to marking buffer enabled
+      </p></dd><dt><span class="term">postenable</span></dt><dd><p>
+[DRIVER] function to run after marking buffer enabled
+      </p></dd><dt><span class="term">predisable</span></dt><dd><p>
+[DRIVER] function to run prior to marking buffer
+disabled
+      </p></dd><dt><span class="term">postdisable</span></dt><dd><p>
+[DRIVER] function to run after marking buffer disabled
+      </p></dd><dt><span class="term">validate_scan_mask</span></dt><dd><p>
+[DRIVER] function callback to check whether a given
+scan mask is valid for the device.
+      </p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="API-iio-triggered-buffer-cleanup.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiotriggered_buffer.html#iiotrigbufsetup">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="iioresources.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="phrase">iio_triggered_buffer_cleanup</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 3.  Resources </td></tr></table></div></body></html>

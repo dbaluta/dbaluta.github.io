@@ -1,0 +1,64 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Industrial I/O triggers</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="iiosubsys.html" title="Chapter 2. Industrial I/O core"><link rel="prev" href="API-iio-buffer-put.html" title="iio_buffer_put"><link rel="next" href="API-struct-iio-trigger.html" title="struct iio_trigger"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Industrial I/O triggers  </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="API-iio-buffer-put.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Industrial I/O core</th><td width="20%" align="right"> <a accesskey="n" href="API-struct-iio-trigger.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="iiotrigger"></a> Industrial I/O triggers  </h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="refentrytitle"><a href="API-struct-iio-trigger.html"><span class="phrase">struct iio_trigger</span></a></span><span class="refpurpose"> — 
+  industrial I/O trigger device
+ </span></dt><dt><span class="refentrytitle"><a href="API-devm-iio-trigger-alloc.html"><span class="phrase">devm_iio_trigger_alloc</span></a></span><span class="refpurpose"> — 
+  Resource-managed <code class="function">iio_trigger_alloc</code>
+ </span></dt><dt><span class="refentrytitle"><a href="API-devm-iio-trigger-free.html"><span class="phrase">devm_iio_trigger_free</span></a></span><span class="refpurpose"> — 
+     Resource-managed <code class="function">iio_trigger_free</code>
+ </span></dt><dt><span class="sect2"><a href="iiotrigger.html#iiotrigsysfs"> IIO trigger sysfs interface </a></span></dt><dt><span class="sect2"><a href="iiotrigger.html#iiotrigattr"> IIO trigger setup</a></span></dt><dt><span class="sect2"><a href="iiotrigger.html#iiotrigsetup"> IIO trigger ops</a></span></dt></dl></div><p>
+      In many situations it is useful for a driver to be able to
+      capture data based on some external event (trigger) as opposed
+      to periodically polling for data. An IIO trigger can be provided
+      by a device driver that also has an IIO device based on hardware
+      generated events (e.g. data ready or threshold exceeded) or
+      provided by a separate driver from an independent interrupt
+      source (e.g. GPIO line connected to some external system, timer
+      interrupt or user space reading a specific file in sysfs). A
+      trigger may initialize data capture for a number of sensors and
+      also it may be completely unrelated to the sensor itself.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiotrigsysfs"></a> IIO trigger sysfs interface </h3></div></div></div>
+      There are two locations in sysfs related to triggers:
+      <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/devices/triggerX</code>,
+          this file is created once an IIO triggered is registered with
+          the IIO core and corresponds to trigger with index X. Because
+          triggers can be very different depending on type there are few
+          standard attributes that we can describe here:
+          <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><span class="emphasis"><em>name</em></span>, trigger name that can be later
+                used to for association with a device.
+            </li><li class="listitem"><span class="emphasis"><em>sampling_frequency</em></span>, some timer based
+              triggers use this attribute to specify the frequency for
+              trigger calls.
+            </li></ul></div></li><li class="listitem"><code class="filename">/sys/bus/iio/devices/iio:deviceX/trigger/</code>, this
+          directory is created once the device supports a triggered
+          buffer. We can associate a trigger with our device by writing
+            trigger's name in the<code class="filename">current_trigger</code> file.
+        </li></ul></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiotrigattr"></a> IIO trigger setup</h3></div></div></div><p>
+      Let's see a simple example of how to setup a trigger to be used
+      by a driver.
+
+      </p><pre class="programlisting">
+      struct iio_trigger_ops trigger_ops = {
+          .set_trigger_state = sample_trigger_state,
+          .validate_device = sample_validate_device,
+      }
+
+      struct iio_trigger *trig;
+
+      /* first, allocate memory for our trigger */
+      trig = iio_trigger_alloc(dev, "trig-%s-%d", name, idx);
+
+      /* setup trigger operations field */
+      trig-&gt;ops = &amp;trigger_ops;
+
+      /* now register the trigger with the IIO core */
+      iio_trigger_register(trig);
+      </pre><p>
+    </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiotrigsetup"></a> IIO trigger ops</h3></div></div></div><div class="toc"><dl class="toc"><dt><span class="refentrytitle"><a href="API-struct-iio-trigger-ops.html"><span class="phrase">struct iio_trigger_ops</span></a></span><span class="refpurpose"> — 
+  operations structure for an iio_trigger.
+ </span></dt></dl></div><p>
+        Notice that a trigger has a set of operations attached:
+        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="function">set_trigger_state</code>, switch the trigger on/off
+          on demand.
+        </li><li class="listitem"><code class="function">validate_device</code>, function to validate the
+          device when the current trigger gets changed.
+        </li></ul></div><p>
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="API-iio-buffer-put.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiosubsys.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="API-struct-iio-trigger.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="phrase">iio_buffer_put</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">struct iio_trigger</span></td></tr></table></div></body></html>

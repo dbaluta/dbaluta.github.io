@@ -1,0 +1,23 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 3.  Resources</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="index.html" title="Industrial I/O driver developer's guide"><link rel="prev" href="API-struct-iio-buffer-setup-ops.html" title="struct iio_buffer_setup_ops"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3.  Resources </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="API-struct-iio-buffer-setup-ops.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="iioresources"></a>Chapter 3.  Resources </h1></div></div></div>
+      IIO core may change during time so the best documentation to read is the
+      source code. There are several locations where you should look:
+      <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">drivers/iio/</code>, contains the IIO core plus
+          and directories for each sensor type (e.g. accel, magnetometer,
+          etc.)
+        </li><li class="listitem"><code class="filename">include/linux/iio/</code>, contains the header
+          files, nice to read for the internal kernel interfaces.
+        </li><li class="listitem"><code class="filename">include/uapi/linux/iio/</code>, contains file to be
+          used by user space applications.
+        </li><li class="listitem"><code class="filename">tools/iio/</code>, contains tools for rapidly
+          testing buffers, events and device creation.
+        </li><li class="listitem"><code class="filename">drivers/staging/iio/</code>, contains code for some
+          drivers or experimental features that are not yet mature enough
+          to be moved out.
+        </li></ul></div><p>
+    Besides the code, there are some good online documentation sources:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="ulink" href="http://marc.info/?l=linux-iio" target="_top"> Industrial I/O mailing
+      list </a></li><li class="listitem"><a class="ulink" href="http://wiki.analog.com/software/linux/docs/iio/iio" target="_top">
+      Analog Device IIO wiki page </a></li><li class="listitem"><a class="ulink" href="https://fosdem.org/2015/schedule/event/iiosdr/" target="_top">
+      Using the Linux IIO framework for SDR, Lars-Peter Clausen's
+      presentation at FOSDEM </a></li></ul></div><p>
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="API-struct-iio-buffer-setup-ops.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"><span class="phrase">struct iio_buffer_setup_ops</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

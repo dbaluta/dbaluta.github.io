@@ -1,0 +1,53 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>struct iio_buffer</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="iiobuffer.html" title="Industrial I/O buffers"><link rel="prev" href="iiobuffer.html" title="Industrial I/O buffers"><link rel="next" href="API-iio-validate-scan-mask-onehot.html" title="iio_validate_scan_mask_onehot"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><span class="phrase">struct iio_buffer</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="iiobuffer.html">Prev</a> </td><th width="60%" align="center"> Industrial I/O buffers </th><td width="20%" align="right"> <a accesskey="n" href="API-iio-validate-scan-mask-onehot.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="API-struct-iio-buffer"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>struct iio_buffer — 
+  general buffer structure
+ </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><pre class="programlisting">
+struct iio_buffer {
+  int length;
+  int bytes_per_datum;
+  struct attribute_group * scan_el_attrs;
+  long * scan_mask;
+  bool scan_timestamp;
+  const struct iio_buffer_access_funcs * access;
+  struct list_head scan_el_dev_attr_list;
+  struct attribute_group scan_el_group;
+  wait_queue_head_t pollq;
+  bool stufftoread;
+  struct list_head demux_list;
+  void * demux_bounce;
+  struct list_head buffer_list;
+  struct kref ref;
+  unsigned int watermark;
+};  </pre></div><div class="refsect1"><a name="idp59140240"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">length</span></dt><dd><p>
+[DEVICE] number of datums in buffer
+      </p></dd><dt><span class="term">bytes_per_datum</span></dt><dd><p>
+[DEVICE] size of individual datum including timestamp
+      </p></dd><dt><span class="term">scan_el_attrs</span></dt><dd><p>
+[DRIVER] control of scan elements if that scan mode
+control method is used
+      </p></dd><dt><span class="term">scan_mask</span></dt><dd><p>
+[INTERN] bitmask used in masking scan mode elements
+      </p></dd><dt><span class="term">scan_timestamp</span></dt><dd><p>
+[INTERN] does the scan mode include a timestamp
+      </p></dd><dt><span class="term">access</span></dt><dd><p>
+[DRIVER] buffer access functions associated with the
+implementation.
+      </p></dd><dt><span class="term">scan_el_dev_attr_list</span></dt><dd><p>
+[INTERN] list of scan element related attributes.
+      </p></dd><dt><span class="term">scan_el_group</span></dt><dd><p>
+[DRIVER] attribute group for those attributes not
+created from the iio_chan_info array.
+      </p></dd><dt><span class="term">pollq</span></dt><dd><p>
+[INTERN] wait queue to allow for polling on the buffer.
+      </p></dd><dt><span class="term">stufftoread</span></dt><dd><p>
+[INTERN] flag to indicate new data.
+      </p></dd><dt><span class="term">demux_list</span></dt><dd><p>
+[INTERN] list of operations required to demux the scan.
+      </p></dd><dt><span class="term">demux_bounce</span></dt><dd><p>
+[INTERN] buffer for doing gather from incoming scan.
+      </p></dd><dt><span class="term">buffer_list</span></dt><dd><p>
+[INTERN] entry in the devices list of current buffers.
+      </p></dd><dt><span class="term">ref</span></dt><dd><p>
+[INTERN] reference count of the buffer.
+      </p></dd><dt><span class="term">watermark</span></dt><dd><p>
+[INTERN] number of datums to wait for poll/read.
+      </p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="iiobuffer.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiobuffer.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="API-iio-validate-scan-mask-onehot.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> Industrial I/O buffers  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">iio_validate_scan_mask_onehot</span></td></tr></table></div></body></html>

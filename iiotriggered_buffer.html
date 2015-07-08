@@ -1,0 +1,61 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Industrial I/O triggered buffers</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="iiosubsys.html" title="Chapter 2. Industrial I/O core"><link rel="prev" href="API-struct-iio-trigger-ops.html" title="struct iio_trigger_ops"><link rel="next" href="API-iio-triggered-buffer-setup.html" title="iio_triggered_buffer_setup"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Industrial I/O triggered buffers </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="API-struct-iio-trigger-ops.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Industrial I/O core</th><td width="20%" align="right"> <a accesskey="n" href="API-iio-triggered-buffer-setup.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="iiotriggered_buffer"></a> Industrial I/O triggered buffers </h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="sect2"><a href="iiotriggered_buffer.html#iiotrigbufsetup"> IIO triggered buffer setup</a></span></dt></dl></div><p>
+    Now that we know what buffers and triggers are let's see how they
+    work together.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiotrigbufsetup"></a> IIO triggered buffer setup</h3></div></div></div><div class="toc"><dl class="toc"><dt><span class="refentrytitle"><a href="API-iio-triggered-buffer-setup.html"><span class="phrase">iio_triggered_buffer_setup</span></a></span><span class="refpurpose"> — 
+  Setup triggered buffer and pollfunc
+ </span></dt><dt><span class="refentrytitle"><a href="API-iio-triggered-buffer-cleanup.html"><span class="phrase">iio_triggered_buffer_cleanup</span></a></span><span class="refpurpose"> — 
+     Free resources allocated by <code class="function">iio_triggered_buffer_setup</code>
+ </span></dt><dt><span class="refentrytitle"><a href="API-struct-iio-buffer-setup-ops.html"><span class="phrase">struct iio_buffer_setup_ops</span></a></span><span class="refpurpose"> — 
+  buffer setup related callbacks
+ </span></dt></dl></div><p>
+    A typical triggered buffer setup looks like this:
+    </p><pre class="programlisting">
+    const struct iio_buffer_setup_ops sensor_buffer_setup_ops = {
+      .preenable    = sensor_buffer_preenable,
+      .postenable   = sensor_buffer_postenable,
+      .postdisable  = sensor_buffer_postdisable,
+      .predisable   = sensor_buffer_predisable,
+    };
+
+    irqreturn_t sensor_iio_pollfunc(int irq, void *p)
+    {
+        pf-&gt;timestamp = iio_get_time_ns();
+        return IRQ_WAKE_THREAD;
+    }
+
+    irqreturn_t sensor_trigger_handler(int irq, void *p)
+    {
+        u16 buf[8];
+
+        /* read data for each active channel */
+        for_each_set_bit(bit, active_scan_mask, masklength)
+            buf[i++] = sensor_get_data(bit)
+
+        iio_push_to_buffers_with_timestamp(indio_dev, buffer, timestamp);
+
+        iio_trigger_notify_done(trigger);
+    }
+
+    /* setup triggered buffer, usually in probe function */
+    iio_triggered_buffer_setup(indio_dev, sensor_iio_polfunc,
+                               sensor_trigger_handler,
+                               sensor_buffer_setup_ops);
+    </pre><p>
+    </p>
+    The important things to notice here are:
+    <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="function"> iio_buffer_setup_ops</code>, buffer setup
+    functions to be called at predefined points in buffer configuration
+    sequence (e.g. before enable, after disable). If not specified, IIO
+    core uses default <span class="type">iio_triggered_buffer_setup_ops</span>.
+    </li><li class="listitem"><code class="function">sensor_iio_pollfunc</code>, function that
+    will be used as top half of poll function. It usually does little
+    processing (as it runs in interrupt context). Most common operation
+    is recording of the current timestamp and for this reason one can
+    use the IIO core defined <code class="function">iio_pollfunc_store_time</code>
+    function.
+    </li><li class="listitem"><code class="function">sensor_trigger_handler</code>, function that
+    will be used as bottom half of poll function. Here all the
+    processing takes place. It usually reads data from the device and
+    stores it in the internal buffer together with the timestamp
+    recorded in the top half.
+    </li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="API-struct-iio-trigger-ops.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiosubsys.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="API-iio-triggered-buffer-setup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="phrase">struct iio_trigger_ops</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">iio_triggered_buffer_setup</span></td></tr></table></div></body></html>

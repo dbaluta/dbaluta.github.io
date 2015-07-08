@@ -1,0 +1,103 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>struct iio_dev</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="iiosubsys.html#iiodevice" title="Industrial I/O devices"><link rel="prev" href="iiosubsys.html" title="Chapter 2. Industrial I/O core"><link rel="next" href="API-iio-device-alloc.html" title="iio_device_alloc"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><span class="phrase">struct iio_dev</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="iiosubsys.html">Prev</a> </td><th width="60%" align="center"> Industrial I/O devices </th><td width="20%" align="right"> <a accesskey="n" href="API-iio-device-alloc.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="API-struct-iio-dev"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>struct iio_dev — 
+  industrial I/O device
+ </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><pre class="programlisting">
+struct iio_dev {
+  int id;
+  int modes;
+  int currentmode;
+  struct device dev;
+  struct iio_event_interface * event_interface;
+  struct iio_buffer * buffer;
+  struct list_head buffer_list;
+  int scan_bytes;
+  struct mutex mlock;
+  const unsigned long * available_scan_masks;
+  unsigned masklength;
+  const unsigned long * active_scan_mask;
+  bool scan_timestamp;
+  unsigned scan_index_timestamp;
+  struct iio_trigger * trig;
+  struct iio_poll_func * pollfunc;
+  struct iio_chan_spec const * channels;
+  int num_channels;
+  struct list_head channel_attr_list;
+  struct attribute_group chan_attr_group;
+  const char * name;
+  const struct iio_info * info;
+  struct mutex info_exist_lock;
+  const struct iio_buffer_setup_ops * setup_ops;
+  struct cdev chrdev;
+#define IIO_MAX_GROUPS 6
+  const struct attribute_group * groups[IIO_MAX_GROUPS + 1];
+  int groupcounter;
+  unsigned long flags;
+#if defined(CONFIG_DEBUG_FS)
+  struct dentry * debugfs_dentry;
+  unsigned cached_reg_addr;
+#endif
+};  </pre></div><div class="refsect1"><a name="idp54247968"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">id</span></dt><dd><p>
+[INTERN] used to identify device internally
+      </p></dd><dt><span class="term">modes</span></dt><dd><p>
+[DRIVER] operating modes supported by device
+      </p></dd><dt><span class="term">currentmode</span></dt><dd><p>
+[DRIVER] current operating mode
+      </p></dd><dt><span class="term">dev</span></dt><dd><p>
+[DRIVER] device structure, should be assigned a parent
+and owner
+      </p></dd><dt><span class="term">event_interface</span></dt><dd><p>
+[INTERN] event chrdevs associated with interrupt lines
+      </p></dd><dt><span class="term">buffer</span></dt><dd><p>
+[DRIVER] any buffer present
+      </p></dd><dt><span class="term">buffer_list</span></dt><dd><p>
+[INTERN] list of all buffers currently attached
+      </p></dd><dt><span class="term">scan_bytes</span></dt><dd><p>
+[INTERN] num bytes captured to be fed to buffer demux
+      </p></dd><dt><span class="term">mlock</span></dt><dd><p>
+[INTERN] lock used to prevent simultaneous device state
+changes
+      </p></dd><dt><span class="term">available_scan_masks</span></dt><dd><p>
+[DRIVER] optional array of allowed bitmasks
+      </p></dd><dt><span class="term">masklength</span></dt><dd><p>
+[INTERN] the length of the mask established from
+channels
+      </p></dd><dt><span class="term">active_scan_mask</span></dt><dd><p>
+[INTERN] union of all scan masks requested by buffers
+      </p></dd><dt><span class="term">scan_timestamp</span></dt><dd><p>
+[INTERN] set if any buffers have requested timestamp
+      </p></dd><dt><span class="term">scan_index_timestamp</span></dt><dd><p>
+[INTERN] cache of the index to the timestamp
+      </p></dd><dt><span class="term">trig</span></dt><dd><p>
+[INTERN] current device trigger (buffer modes)
+      </p></dd><dt><span class="term">pollfunc</span></dt><dd><p>
+[DRIVER] function run on trigger being received
+      </p></dd><dt><span class="term">channels</span></dt><dd><p>
+[DRIVER] channel specification structure table
+      </p></dd><dt><span class="term">num_channels</span></dt><dd><p>
+[DRIVER] number of channels specified in <em class="parameter"><code>channels</code></em>.
+      </p></dd><dt><span class="term">channel_attr_list</span></dt><dd><p>
+[INTERN] keep track of automatically created channel
+attributes
+      </p></dd><dt><span class="term">chan_attr_group</span></dt><dd><p>
+[INTERN] group for all attrs in base directory
+      </p></dd><dt><span class="term">name</span></dt><dd><p>
+[DRIVER] name of the device.
+      </p></dd><dt><span class="term">info</span></dt><dd><p>
+[DRIVER] callbacks and constant info from driver
+      </p></dd><dt><span class="term">info_exist_lock</span></dt><dd><p>
+[INTERN] lock to prevent use during removal
+      </p></dd><dt><span class="term">setup_ops</span></dt><dd><p>
+[DRIVER] callbacks to call before and after buffer
+enable/disable
+      </p></dd><dt><span class="term">chrdev</span></dt><dd><p>
+[INTERN] associated character device
+      </p></dd><dt><span class="term">groups[IIO_MAX_GROUPS + 1]</span></dt><dd><p>
+[INTERN] attribute groups
+      </p></dd><dt><span class="term">groupcounter</span></dt><dd><p>
+[INTERN] index of next attribute group
+      </p></dd><dt><span class="term">flags</span></dt><dd><p>
+[INTERN] file ops related flags including busy flag.
+      </p></dd><dt><span class="term">debugfs_dentry</span></dt><dd><p>
+[INTERN] device specific debugfs dentry.
+      </p></dd><dt><span class="term">cached_reg_addr</span></dt><dd><p>
+[INTERN] cached register address for debugfs reads.
+      </p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="iiosubsys.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiosubsys.html#iiodevice">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="API-iio-device-alloc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 2. Industrial I/O core </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">iio_device_alloc</span></td></tr></table></div></body></html>

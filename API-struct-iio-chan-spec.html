@@ -1,0 +1,98 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>struct iio_chan_spec</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="iiosubsys.html#iiochannel" title="IIO device channels"><link rel="prev" href="API-iio-device-unregister.html" title="iio_device_unregister"><link rel="next" href="iiobuffer.html" title="Industrial I/O buffers"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><span class="phrase">struct iio_chan_spec</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="API-iio-device-unregister.html">Prev</a> </td><th width="60%" align="center"> IIO device channels </th><td width="20%" align="right"> <a accesskey="n" href="iiobuffer.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="API-struct-iio-chan-spec"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>struct iio_chan_spec — 
+  specification of a single channel
+ </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><pre class="programlisting">
+struct iio_chan_spec {
+  enum iio_chan_type type;
+  int channel;
+  int channel2;
+  unsigned long address;
+  int scan_index;
+  struct scan_type;
+  long info_mask_separate;
+  long info_mask_shared_by_type;
+  long info_mask_shared_by_dir;
+  long info_mask_shared_by_all;
+  const struct iio_event_spec * event_spec;
+  unsigned int num_event_specs;
+  const struct iio_chan_spec_ext_info * ext_info;
+  const char * extend_name;
+  const char * datasheet_name;
+  unsigned modified:1;
+  unsigned indexed:1;
+  unsigned output:1;
+  unsigned differential:1;
+};  </pre></div><div class="refsect1"><a name="idp59088432"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">type</span></dt><dd><p>
+What type of measurement is the channel making.
+      </p></dd><dt><span class="term">channel</span></dt><dd><p>
+What number do we wish to assign the channel.
+      </p></dd><dt><span class="term">channel2</span></dt><dd><p>
+If there is a second number for a differential
+channel then this is it. If modified is set then the
+value here specifies the modifier.
+      </p></dd><dt><span class="term">address</span></dt><dd><p>
+Driver specific identifier.
+      </p></dd><dt><span class="term">scan_index</span></dt><dd><p>
+Monotonic index to give ordering in scans when read
+from a buffer.
+      </p></dd><dt><span class="term">scan_type</span></dt><dd><p>
+Sign:		's' or 'u' to specify signed or unsigned
+      </p></dd><dt><span class="term">info_mask_separate</span></dt><dd><p>
+What information is to be exported that is specific to
+this channel.
+      </p></dd><dt><span class="term">info_mask_shared_by_type</span></dt><dd><p>
+What information is to be exported that is shared
+by all channels of the same type.
+      </p></dd><dt><span class="term">info_mask_shared_by_dir</span></dt><dd><p>
+What information is to be exported that is shared
+by all channels of the same direction.
+      </p></dd><dt><span class="term">info_mask_shared_by_all</span></dt><dd><p>
+What information is to be exported that is shared
+by all channels.
+      </p></dd><dt><span class="term">event_spec</span></dt><dd><p>
+Array of events which should be registered for this
+channel.
+      </p></dd><dt><span class="term">num_event_specs</span></dt><dd><p>
+Size of the event_spec array.
+      </p></dd><dt><span class="term">ext_info</span></dt><dd><p>
+Array of extended info attributes for this channel.
+The array is NULL terminated, the last element should
+have its name field set to NULL.
+      </p></dd><dt><span class="term">extend_name</span></dt><dd><p>
+Allows labeling of channel attributes with an
+informative name. Note this has no effect codes etc,
+unlike modifiers.
+      </p></dd><dt><span class="term">datasheet_name</span></dt><dd><p>
+A name used in in-kernel mapping of channels. It should
+correspond to the first name that the channel is referred
+to by in the datasheet (e.g. IND), or the nearest
+possible compound name (e.g. IND-INC).
+      </p></dd><dt><span class="term">modified</span></dt><dd><p>
+Does a modifier apply to this channel. What these are
+depends on the channel type.  Modifier is set in
+channel2. Examples are IIO_MOD_X for axial sensors about
+the 'x' axis.
+      </p></dd><dt><span class="term">indexed</span></dt><dd><p>
+Specify the channel has a numerical index. If not,
+the channel index number will be suppressed for sysfs
+attributes but not for event codes.
+      </p></dd><dt><span class="term">output</span></dt><dd><p>
+Channel is output.
+      </p></dd><dt><span class="term">differential</span></dt><dd><p>
+Channel is differential.
+      </p></dd></dl></div></div><div class="refsect1"><a name="idp59115536"></a><h2>realbits</h2><p>
+   Number of valid bits of data
+</p></div><div class="refsect1"><a name="idp59116688"></a><h2>storage_bits</h2><p>
+   Realbits + padding
+</p></div><div class="refsect1"><a name="idp59117840"></a><h2>shift</h2><p>
+   Shift right by this before masking out
+   realbits.
+</p></div><div class="refsect1"><a name="idp59119072"></a><h2>endianness</h2><p>
+   little or big endian
+</p></div><div class="refsect1"><a name="idp59120224"></a><h2>repeat</h2><p>
+   Number of times real/storage bits
+   repeats. When the repeat element is
+   more than 1, then the type element in
+   sysfs will show a repeat value.
+   Otherwise, the number of repetitions is
+   omitted.
+</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="API-iio-device-unregister.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiosubsys.html#iiochannel">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="iiobuffer.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="phrase">iio_device_unregister</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">  Industrial I/O buffers </td></tr></table></div></body></html>
