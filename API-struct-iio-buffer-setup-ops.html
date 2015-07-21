@@ -7,7 +7,7 @@ struct iio_buffer_setup_ops {
   int (* predisable) (struct iio_dev *);
   int (* postdisable) (struct iio_dev *);
   bool (* validate_scan_mask) (struct iio_dev *indio_dev,const unsigned long *scan_mask);
-};  </pre></div><div class="refsect1"><a name="idp59360400"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">preenable</span></dt><dd><p>
+};  </pre></div><div class="refsect1"><a name="idp56248736"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">preenable</span></dt><dd><p>
 [DRIVER] function to run prior to marking buffer enabled
       </p></dd><dt><span class="term">postenable</span></dt><dd><p>
 [DRIVER] function to run after marking buffer enabled

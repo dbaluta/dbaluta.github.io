@@ -23,46 +23,70 @@
       trigger. Future chapters will add details about triggers and how
       drivers use triggers to start data capture, moving samples from device
       registers to buffer storage and then upward to user space applications.
-    </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiobuffersetup"></a> IIO buffer setup </h3></div></div></div><p>The important bits for selecting data channels
-      configuration are exposed to userspace applications via the <code class="filename">
-      /sys/bus/iio/iio:deviceX/scan_elements/</code> directory. This
-      file contains attributes of the following form:
+    </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiobuffersetup"></a> IIO buffer setup </h3></div></div></div><p>The meta information associated with a channel reading
+        placed in a buffer is called a <span class="emphasis"><em> scan element </em></span>.
+        The important bits configuring scan elements are exposed to
+        userspace applications via the <code class="filename">
+        /sys/bus/iio/iio:deviceX/scan_elements/</code> directory. This
+        file contains attributes of the following form:
       </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="emphasis"><em>enable</em></span>, used for enabling a channel.
-        If and only if his attribute is non zero, thena triggered capture
-        will contain data sample for this channel.
-      </li><li class="listitem"><span class="emphasis"><em>type</em></span>,  description of the scan element
+        If and only if its attribute is non zero, then a triggered capture
+        will contain data samples for this channel.
+      </li><li class="listitem"><span class="emphasis"><em>type</em></span>, description of the scan element
         data storage within the buffer and hence the form in which it is
         read from user space. Format is <span class="emphasis"><em>
         [be|le]:[s|u]bits/storagebits[&gt;&gt;shift] </em></span>.
         <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><span class="emphasis"><em>be</em></span> or <span class="emphasis"><em>le</em></span> specifies
           big or little endian.
         </li><li class="listitem"><span class="emphasis"><em>s </em></span>or <span class="emphasis"><em>u</em></span> specifies if
-        signed (2's complement) or unsigned.
-        </li><li class="listitem">bits is the number of bits of data
-        </li><li class="listitem">storagebits is the space (after padding) that it occupies in the
-          buffer.
+          signed (2's complement) or unsigned.
+        </li><li class="listitem"><span class="emphasis"><em>bits</em></span> is the number of bits of data
+        </li><li class="listitem"><span class="emphasis"><em>storagebits</em></span> is the space (after padding)
+          that it occupies in the buffer.
         </li><li class="listitem"><span class="emphasis"><em>shift</em></span> if specified, is the shift that needs
           to be a applied prior to masking out unused bits
         </li></ul></div></li></ul></div><p>
+      For example, a driver for a 3-axis accelerometer with 12 bit
+      resolution where data is stored in two 8-bits registers as
+      follows:
+      </p><pre class="programlisting">
+        7   6   5   4   3   2   1   0
+      +---+---+---+---+---+---+---+---+
+      |D3 |D2 |D1 |D0 | X | X | X | X | (LOW byte, address 0x06)
+      +---+---+---+---+---+---+---+---+
 
+        7   6   5   4   3   2   1   0
+      +---+---+---+---+---+---+---+---+
+      |D11|D10|D9 |D8 |D7 |D6 |D5 |D4 | (HIGH byte, address 0x07)
+      +---+---+---+---+---+---+---+---+
+      </pre><p>
+
+      will have the following scan element type for each axis:
+      </p><pre class="programlisting">
+      $ cat /sys/bus/iio/devices/iio:device0/scan_elements/in_accel_y_type
+      le:s12/16&gt;&gt;4
+      </pre><p>
+      The userspace applications will interpret data samples read from buffer
+      as two byte little endian signed data, that needs a 4 bits right
+      shift before masking out the only 12 valid bits of real data.
+    </p><p>
       For implementing buffer support a driver should initialize the following
       fields in <span class="type">iio_chan_spec</span> definition:
-
       </p><pre class="programlisting">
-      struct iio_chan_spec {
-          /* other members */
-          int scan_index
-          struct {
-              u8 realbits;
-              u8 storagebits;
-              u8 shift;
-              enum iio_endian endianness;
-          } scan_type;
-      }
+          struct iio_chan_spec {
+              /* other members */
+              int scan_index
+              struct {
+                  char sign;
+                  u8 realbits;
+                  u8 storagebits;
+                  u8 shift;
+                  enum iio_endian endianness;
+              } scan_type;
+          };
       </pre><p>
-      Here is what a 3-axis, 12 bits accelerometer channels definition
-      looks like with buffer support:
-
+      The driver implementing the accelerometer described above will
+      have the following channel definition:
       </p><pre class="programlisting">
       struct struct iio_chan_spec accel_channels[] = {
           {
@@ -76,7 +100,7 @@
               .realbits = 12,
               .storgebits = 16,
               .shift = 4,
-              .endianess = IIO_CPU,
+              .endianess = IIO_LE,
             },
         }
         /* similar for Y and  Z axis */

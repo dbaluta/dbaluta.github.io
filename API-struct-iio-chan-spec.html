@@ -21,7 +21,7 @@ struct iio_chan_spec {
   unsigned indexed:1;
   unsigned output:1;
   unsigned differential:1;
-};  </pre></div><div class="refsect1"><a name="idp59088432"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">type</span></dt><dd><p>
+};  </pre></div><div class="refsect1"><a name="idp55951424"></a><h2>Members</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">type</span></dt><dd><p>
 What type of measurement is the channel making.
       </p></dd><dt><span class="term">channel</span></dt><dd><p>
 What number do we wish to assign the channel.
@@ -79,16 +79,16 @@ attributes but not for event codes.
 Channel is output.
       </p></dd><dt><span class="term">differential</span></dt><dd><p>
 Channel is differential.
-      </p></dd></dl></div></div><div class="refsect1"><a name="idp59115536"></a><h2>realbits</h2><p>
+      </p></dd></dl></div></div><div class="refsect1"><a name="idp55978528"></a><h2>realbits</h2><p>
    Number of valid bits of data
-</p></div><div class="refsect1"><a name="idp59116688"></a><h2>storage_bits</h2><p>
+</p></div><div class="refsect1"><a name="idp55979680"></a><h2>storage_bits</h2><p>
    Realbits + padding
-</p></div><div class="refsect1"><a name="idp59117840"></a><h2>shift</h2><p>
+</p></div><div class="refsect1"><a name="idp55980832"></a><h2>shift</h2><p>
    Shift right by this before masking out
    realbits.
-</p></div><div class="refsect1"><a name="idp59119072"></a><h2>endianness</h2><p>
+</p></div><div class="refsect1"><a name="idp55982064"></a><h2>endianness</h2><p>
    little or big endian
-</p></div><div class="refsect1"><a name="idp59120224"></a><h2>repeat</h2><p>
+</p></div><div class="refsect1"><a name="idp55983216"></a><h2>repeat</h2><p>
    Number of times real/storage bits
    repeats. When the repeat element is
    more than 1, then the type element in

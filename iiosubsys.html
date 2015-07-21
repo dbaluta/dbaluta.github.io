@@ -54,16 +54,17 @@
       for the IIO device.
     </li></ul></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iioattr"></a> IIO device sysfs interface </h3></div></div></div><p>
         Attributes are sysfs files used to expose chip info and also allowing
-        applications to set various configuration parameters. Common
-        attributes are:
-        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/name</code>,
-          description of the physical chip for device X.
-          </li><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/dev</code>,
-            shows the major:minor pair associated with
-            /dev/iio:deviceX node.
-          </li><li class="listitem"><code class="filename">/sys/bus/iio:deviceX/sampling_frequency_available
-          </code> available discrete set of sampling frequency values
-          for device X.
+        applications to set various configuration parameters. For device
+        with index X, attributes can be found under
+        <code class="filename">/sys/bus/iio/iio:deviceX/ </code> directory.
+        Common attributes are:
+        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">name</code>, description of the physical
+            chip.
+          </li><li class="listitem"><code class="filename">dev</code>, shows the major:minor pair
+            associated with <code class="filename">/dev/iio:deviceX</code> node.
+          </li><li class="listitem"><code class="filename">sampling_frequency_available</code>,
+            available discrete set of sampling frequency values for
+            device.
           </li></ul></div><p>
       Available standard attributes for IIO devices are described in the
       <code class="filename">Documentation/ABI/testing/sysfs-bus-iio </code> file
@@ -77,10 +78,10 @@
           a thermometer sensor has one channel representing the
           temperature measurement.
           </li><li class="listitem">
-          a light sensor has two channels indicating the measurements in
+          a light sensor with two channels indicating the measurements in
           the visible and infrared spectrum.
           </li><li class="listitem">
-          an accelerometer can have up two 3 channels representing
+          an accelerometer can have up to 3 channels representing
           acceleration on X, Y and Z axes.
           </li></ul></div><p>
       An IIO channel is described by the <span class="type"> struct iio_chan_spec
@@ -93,12 +94,31 @@
               .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
           },
       };
-      </pre><p>
 
-      When there are multiple channels per device we need to set the <span class="type">
-      .modified </span> field of <span class="type">iio_chan_spec</span> to 1. For example,
-      a light sensor can have two channels one, for infrared light and one for
-      both infrared and visible light.
+      </pre><p>
+      Channel sysfs attributes exposed to userspace are specified in
+      the form of <span class="emphasis"><em>bitmasks</em></span>. Depending on their
+      shared info, attributes can be set in one of the following masks:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="emphasis"><em>info_mask_separate</em></span>, attributes will
+        be specific to this channel</li><li class="listitem"><span class="emphasis"><em>info_mask_shared_by_type</em></span>,
+        attributes are shared by all channels of the same type</li><li class="listitem"><span class="emphasis"><em>info_mask_shared_by_dir</em></span>, attributes
+        are shared by all channels of the same direction </li><li class="listitem"><span class="emphasis"><em>info_mask_shared_by_all</em></span>,
+        attributes are shared by all channels</li></ul></div><p>
+      When there are multiple data channels per sensor type there are two
+      ways to distinguish between them:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"> set <span class="emphasis"><em> .modified</em></span> field of <span class="type">
+        iio_chan_spec</span> to 1. Modifiers are specified using
+        <span class="emphasis"><em>.channel2</em></span> field of the same
+        <span class="type">iio_chan_spec</span> structure and are used to indicate a
+        physically unique characteristic of the channel such as its direction
+        or spectral response. For example, a light sensor can have two channels,
+        one for infrared light and one for both infrared and visible light.
+      </li><li class="listitem"> set <span class="emphasis"><em>.indexed </em></span> field of
+        <span class="type">iio_chan_spec</span> to 1. In this case the channel is
+        simply another instance with an index specified by the
+        <span class="emphasis"><em>.channel</em></span> field.
+      </li></ul></div><p>
+      Here is how we can make use of the channel's modifiers:
       </p><pre class="programlisting">
       static const struct iio_chan_spec light_channels[] = {
           {
@@ -115,13 +135,46 @@
               .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
               .info_mask_shared = BIT(IIO_CHAN_INFO_SAMP_FREQ),
           },
+          {
+              .type = IIO_LIGHT,
+              .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+              .info_mask_shared = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+          },
+
       }
       </pre><p>
-
       This channel's definition will generate two separate sysfs files
       for raw data retrieval:
       </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_intensity_ir_raw</code></li><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_intensity_both_raw</code></li></ul></div><p>
+      one file for processed data:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_illuminance_input
+      </code></li></ul></div><p>
       and one shared sysfs file for sampling frequency:
       </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_intensity_sampling_frequency.
       </code></li></ul></div><p>
+      </p><p>
+      Here is how we can make use of the channel's indexing:
+      </p><pre class="programlisting">
+      static const struct iio_chan_spec light_channels[] = {
+          {
+              .type = IIO_VOLTAGE,
+              .indexed = 1,
+              .channel = 0,
+              .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+          },
+          {
+              .type = IIO_VOLTAGE,
+              .indexed = 1,
+              .channel = 1,
+              .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+          },
+      }
+      </pre><p>
+      This will generate two separate attributes files for raw data
+      retrieval:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/devices/iio:deviceX/in_voltage0_raw</code>,
+          representing voltage measurement for channel 0.
+      </li><li class="listitem"><code class="filename">/sys/bus/iio/devices/iio:deviceX/in_voltage1_raw</code>,
+          representing voltage measurement for channel 1.
+      </li></ul></div><p>
       </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="intro.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="API-struct-iio-dev.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. Introduction </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">struct iio_dev</span></td></tr></table></div></body></html>

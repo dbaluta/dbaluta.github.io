@@ -1,18 +1,18 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>iio_triggered_buffer_setup</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Industrial I/O driver developer's guide"><link rel="up" href="iiotriggered_buffer.html#iiotrigbufsetup" title="IIO triggered buffer setup"><link rel="prev" href="iiotriggered_buffer.html" title="Industrial I/O triggered buffers"><link rel="next" href="API-iio-triggered-buffer-cleanup.html" title="iio_triggered_buffer_cleanup"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><span class="phrase">iio_triggered_buffer_setup</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="iiotriggered_buffer.html">Prev</a> </td><th width="60%" align="center"> IIO triggered buffer setup</th><td width="20%" align="right"> <a accesskey="n" href="API-iio-triggered-buffer-cleanup.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="API-iio-triggered-buffer-setup"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>iio_triggered_buffer_setup — 
   Setup triggered buffer and pollfunc
- </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">int <b class="fsfunc">iio_triggered_buffer_setup </b>(</code></td><td>struct iio_dev * <var class="pdparam">indio_dev</var>, </td></tr><tr><td> </td><td>irqreturn_t (*<var class="pdparam">pollfunc_bh</var>)
-     <code>(</code>int irq, void *p<code>)</code>, </td></tr><tr><td> </td><td>irqreturn_t (*<var class="pdparam">pollfunc_th</var>)
-     <code>(</code>int irq, void *p<code>)</code>, </td></tr><tr><td> </td><td>const struct iio_buffer_setup_ops * <var class="pdparam">setup_ops</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a name="idp59328576"></a><h2>Arguments</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><em class="parameter"><code>indio_dev</code></em></span></dt><dd><p>
+ </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">int <b class="fsfunc">iio_triggered_buffer_setup </b>(</code></td><td>struct iio_dev * <var class="pdparam">indio_dev</var>, </td></tr><tr><td> </td><td>irqreturn_t (*<var class="pdparam">h</var>)
+     <code>(</code>int irq, void *p<code>)</code>, </td></tr><tr><td> </td><td>irqreturn_t (*<var class="pdparam">thread</var>)
+     <code>(</code>int irq, void *p<code>)</code>, </td></tr><tr><td> </td><td>const struct iio_buffer_setup_ops * <var class="pdparam">setup_ops</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a name="idp56216912"></a><h2>Arguments</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><em class="parameter"><code>indio_dev</code></em></span></dt><dd><p>
      IIO device structure
-    </p></dd><dt><span class="term"><em class="parameter"><code>pollfunc_bh</code></em></span></dt><dd><p>
-     Function which will be used as pollfunc bottom half
-    </p></dd><dt><span class="term"><em class="parameter"><code>pollfunc_th</code></em></span></dt><dd><p>
+    </p></dd><dt><span class="term"><em class="parameter"><code>h</code></em></span></dt><dd><p>
      Function which will be used as pollfunc top half
+    </p></dd><dt><span class="term"><em class="parameter"><code>thread</code></em></span></dt><dd><p>
+     Function which will be used as pollfunc bottom half
     </p></dd><dt><span class="term"><em class="parameter"><code>setup_ops</code></em></span></dt><dd><p>
      Buffer setup functions to use for this device.
      If NULL the default setup functions for triggered
      buffers will be used.
-    </p></dd></dl></div></div><div class="refsect1"><a name="idp59337664"></a><h2>Description</h2><p>
+    </p></dd></dl></div></div><div class="refsect1"><a name="idp56226000"></a><h2>Description</h2><p>
    This function combines some common tasks which will normally be performed
    when setting up a triggered buffer. It will allocate the buffer and the
    pollfunc.

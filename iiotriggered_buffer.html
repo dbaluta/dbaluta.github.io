@@ -43,19 +43,19 @@
     </pre><p>
     </p>
     The important things to notice here are:
-    <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="function"> iio_buffer_setup_ops</code>, buffer setup
+    <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="function"> iio_buffer_setup_ops</code>, the buffer setup
     functions to be called at predefined points in buffer configuration
-    sequence (e.g. before enable, after disable). If not specified, IIO
-    core uses default <span class="type">iio_triggered_buffer_setup_ops</span>.
-    </li><li class="listitem"><code class="function">sensor_iio_pollfunc</code>, function that
+    sequence (e.g. before enable, after disable). If not specified, the
+    IIO core uses the default <span class="type">iio_triggered_buffer_setup_ops</span>.
+    </li><li class="listitem"><code class="function">sensor_iio_pollfunc</code>, the function that
     will be used as top half of poll function. It usually does little
-    processing (as it runs in interrupt context). Most common operation
+    processing (as it runs in interrupt context). The most common operation
     is recording of the current timestamp and for this reason one can
     use the IIO core defined <code class="function">iio_pollfunc_store_time</code>
     function.
-    </li><li class="listitem"><code class="function">sensor_trigger_handler</code>, function that
-    will be used as bottom half of poll function. Here all the
-    processing takes place. It usually reads data from the device and
-    stores it in the internal buffer together with the timestamp
-    recorded in the top half.
+    </li><li class="listitem"><code class="function">sensor_trigger_handler</code>, the function that
+    will be used as bottom half of the poll function. This runs in the
+    context of a kernel thread and all the processing takes place here.
+    It usually reads data from the device and stores it in the internal
+    buffer together with the timestamp recorded in the top half.
     </li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="API-struct-iio-trigger-ops.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiosubsys.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="API-iio-triggered-buffer-setup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="phrase">struct iio_trigger_ops</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">iio_triggered_buffer_setup</span></td></tr></table></div></body></html>
