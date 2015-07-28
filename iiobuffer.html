@@ -19,10 +19,6 @@
         buffer.
       </li><li class="listitem"><span class="emphasis"><em>enable</em></span>, activate buffer capture.
       </li></ul></div><p>
-    </p><p> In order to be useful, a buffer needs to have an associated
-      trigger. Future chapters will add details about triggers and how
-      drivers use triggers to start data capture, moving samples from device
-      registers to buffer storage and then upward to user space applications.
     </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiobuffersetup"></a> IIO buffer setup </h3></div></div></div><p>The meta information associated with a channel reading
         placed in a buffer is called a <span class="emphasis"><em> scan element </em></span>.
         The important bits configuring scan elements are exposed to
@@ -35,7 +31,7 @@
       </li><li class="listitem"><span class="emphasis"><em>type</em></span>, description of the scan element
         data storage within the buffer and hence the form in which it is
         read from user space. Format is <span class="emphasis"><em>
-        [be|le]:[s|u]bits/storagebits[&gt;&gt;shift] </em></span>.
+        [be|le]:[s|u]bits/storagebitsXrepeat[&gt;&gt;shift] </em></span>.
         <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><span class="emphasis"><em>be</em></span> or <span class="emphasis"><em>le</em></span> specifies
           big or little endian.
         </li><li class="listitem"><span class="emphasis"><em>s </em></span>or <span class="emphasis"><em>u</em></span> specifies if
@@ -45,6 +41,9 @@
           that it occupies in the buffer.
         </li><li class="listitem"><span class="emphasis"><em>shift</em></span> if specified, is the shift that needs
           to be a applied prior to masking out unused bits
+        </li><li class="listitem"><span class="emphasis"><em>repeat</em></span>, specifies the number of real/storage bits
+        repetitions. When the repeat element is 0 or 1, then the repeat
+        value is omitted.
         </li></ul></div></li></ul></div><p>
       For example, a driver for a 3-axis accelerometer with 12 bit
       resolution where data is stored in two 8-bits registers as
@@ -81,6 +80,7 @@
                   u8 realbits;
                   u8 storagebits;
                   u8 shift;
+                  u8 repeat;
                   enum iio_endian endianness;
               } scan_type;
           };
@@ -100,12 +100,29 @@
               .realbits = 12,
               .storgebits = 16,
               .shift = 4,
-              .endianess = IIO_LE,
+              .endianness = IIO_LE,
             },
         }
         /* similar for Y and  Z axis */
     }
     </pre><p>
-    Here <span class="emphasis"><em> scan_index </em></span> is used for ordering data samples
-    (scans) when read from buffer.
+    </p><p>
+    Here <span class="emphasis"><em> scan_index </em></span> defines the relative order in which
+    the enabled channels are placed inside the buffer, a channel with a lower
+    scan_index will be placed before a channel with a higher index. Each
+    channels needs to have a unique scan_index.
+    </p><p>
+    It is important to realize that the scan_index does not define the
+    absolution position in the buffer. E.g. a channel with the scan_index = 3
+    will not be at offset 3 bytes or 3 words, but rather will be placed in the
+    buffer after any channel with a scan_index lower than 3 and before
+    any channel with a scan_index larger than 3.
+    Furthermore the scan indices do not have to be consecutive. E.g. A
+    channel spec array that defines 3 channels with the indices 1, 2 and 3 is
+    just as valid as a channel spec that uses the indices 100, 200, 300. The
+    relative order of the channels will be the same.
+    </p><p>
+    Setting scan_index to -1 can be used to indicate that the specific
+    channel does not support buffered capture. In this case no entries will
+    be created for the channel in the scan_elements directory.
     </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="API-struct-iio-chan-spec.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="iiosubsys.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="API-struct-iio-buffer.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="phrase">struct iio_chan_spec</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="phrase">struct iio_buffer</span></td></tr></table></div></body></html>
