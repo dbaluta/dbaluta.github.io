@@ -48,11 +48,11 @@
     sequence (e.g. before enable, after disable). If not specified, the
     IIO core uses the default <span class="type">iio_triggered_buffer_setup_ops</span>.
     </li><li class="listitem"><code class="function">sensor_iio_pollfunc</code>, the function that
-    will be used as top half of poll function. It usually does little
-    processing (as it runs in interrupt context). The most common operation
-    is recording of the current timestamp and for this reason one can
-    use the IIO core defined <code class="function">iio_pollfunc_store_time</code>
-    function.
+    will be used as top half of poll function. It should do as little
+    processing as possible, because it runs in interrupt context. The most
+    common operation is recording of the current timestamp and for this reason
+    one can use the IIO core defined <code class="function">iio_pollfunc_store_time
+    </code> function.
     </li><li class="listitem"><code class="function">sensor_trigger_handler</code>, the function that
     will be used as bottom half of the poll function. This runs in the
     context of a kernel thread and all the processing takes place here.

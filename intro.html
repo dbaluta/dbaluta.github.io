@@ -4,11 +4,11 @@
       conversion (ADC) or digital-to-analog conversion (DAC) or both. The aim
       is to fill the gap between the somewhat similar hwmon and input
       subsystems.
-      Hwmon is very much directed at low sample rate sensors used in
-      applications such as fan speed control and temperature measurement. Input
-      is, as its name suggests, focused on human interaction input devices
-      (keyboard, mouse, touchscreen). In some cases there is considerable
-      overlap between these and IIO.
+      Hwmon is directed at low sample rate sensors used to monitor and
+      control the system itself, like fan speed control or temperature
+      measurement. Input is, as its name suggests, focused on human interaction
+      input devices (keyboard, mouse, touchscreen). In some cases there is
+      considerable overlap between these and IIO.
   </p><p>
     Devices that fall into this category include:
     </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -34,6 +34,7 @@
       </li><li class="listitem">
         temperature sensors
       </li></ul></div><p>
-    Usually these sensors are connected via SPI or I2C. It is also a common
-    use case to have combo functionality (e.g. light plus proximity sensor).
+    Usually these sensors are connected via SPI or I2C. A common use case of the
+    sensors devices is to have combined functionality (e.g. light plus proximity
+    sensor).
   </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="iiosubsys.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Industrial I/O driver developer's guide  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 2. Industrial I/O core</td></tr></table></div></body></html>
