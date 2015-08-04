@@ -26,14 +26,16 @@
     irqreturn_t sensor_trigger_handler(int irq, void *p)
     {
         u16 buf[8];
+        int i = 0;
 
         /* read data for each active channel */
         for_each_set_bit(bit, active_scan_mask, masklength)
             buf[i++] = sensor_get_data(bit)
 
-        iio_push_to_buffers_with_timestamp(indio_dev, buffer, timestamp);
+        iio_push_to_buffers_with_timestamp(indio_dev, buf, timestamp);
 
         iio_trigger_notify_done(trigger);
+        return IRQ_HANDLED;
     }
 
     /* setup triggered buffer, usually in probe function */
@@ -44,7 +46,7 @@
     </p>
     The important things to notice here are:
     <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="function"> iio_buffer_setup_ops</code>, the buffer setup
-    functions to be called at predefined points in buffer configuration
+    functions to be called at predefined points in the buffer configuration
     sequence (e.g. before enable, after disable). If not specified, the
     IIO core uses the default <span class="type">iio_triggered_buffer_setup_ops</span>.
     </li><li class="listitem"><code class="function">sensor_iio_pollfunc</code>, the function that

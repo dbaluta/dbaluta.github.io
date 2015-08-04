@@ -31,7 +31,7 @@
           represents a hardware sensor and groups together the data
           channels of the same chip.
         </li><li class="listitem"><code class="filename">/dev/iio:deviceX</code>, character device node
-          interface used for faster data transfer and for events information
+          interface used for buffered data transfer and for events information
           retrieval.
         </li></ul></div><p>
     </p>
@@ -104,7 +104,7 @@
         attributes are shared by all channels of the same type</li><li class="listitem"><span class="emphasis"><em>info_mask_shared_by_dir</em></span>, attributes
         are shared by all channels of the same direction </li><li class="listitem"><span class="emphasis"><em>info_mask_shared_by_all</em></span>,
         attributes are shared by all channels</li></ul></div><p>
-      When there are multiple data channels per sensor type there are two
+      When there are multiple data channels per channel type we have two
       ways to distinguish between them:
       </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"> set <span class="emphasis"><em> .modified</em></span> field of <span class="type">
         iio_chan_spec</span> to 1. Modifiers are specified using
@@ -150,7 +150,7 @@
       </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_illuminance_input
       </code></li></ul></div><p>
       and one shared sysfs file for sampling frequency:
-      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/in_intensity_sampling_frequency.
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/iio:deviceX/sampling_frequency.
       </code></li></ul></div><p>
       </p><p>
       Here is how we can make use of the channel's indexing:

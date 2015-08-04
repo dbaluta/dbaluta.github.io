@@ -12,25 +12,25 @@
       generated events (e.g. data ready or threshold exceeded) or
       provided by a separate driver from an independent interrupt
       source (e.g. GPIO line connected to some external system, timer
-      interrupt or user space reading a specific file in sysfs). A
-      trigger may initialize data capture for a number of sensors and
+      interrupt or user space writing a specific file in sysfs). A
+      trigger may initiate data capture for a number of sensors and
       also it may be completely unrelated to the sensor itself.
     </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiotrigsysfs"></a> IIO trigger sysfs interface </h3></div></div></div>
       There are two locations in sysfs related to triggers:
       <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="filename">/sys/bus/iio/devices/triggerY</code>,
-          this file is created once an IIO triggered is registered with
+          this file is created once an IIO trigger is registered with
           the IIO core and corresponds to trigger with index Y. Because
           triggers can be very different depending on type there are few
           standard attributes that we can describe here:
           <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><span class="emphasis"><em>name</em></span>, trigger name that can be later
-                used to for association with a device.
+                used for association with a device.
             </li><li class="listitem"><span class="emphasis"><em>sampling_frequency</em></span>, some timer based
               triggers use this attribute to specify the frequency for
               trigger calls.
             </li></ul></div></li><li class="listitem"><code class="filename">/sys/bus/iio/devices/iio:deviceX/trigger/</code>, this
           directory is created once the device supports a triggered
           buffer. We can associate a trigger with our device by writing
-            trigger's name in the<code class="filename">current_trigger</code> file.
+          the trigger's name in the <code class="filename">current_trigger</code> file.
         </li></ul></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiotrigattr"></a> IIO trigger setup</h3></div></div></div><p>
       Let's see a simple example of how to setup a trigger to be used
       by a driver.

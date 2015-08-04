@@ -15,10 +15,11 @@
       An IIO buffer has an associated attributes directory under <code class="filename">
       /sys/bus/iio/iio:deviceX/buffer/</code>. Here are the existing
       attributes:
-      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="emphasis"><em>length</em></span>, number of data samples contained by the
-        buffer.
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><span class="emphasis"><em>length</em></span>, the total number of data samples
+      (capacity) that can be stored by the buffer.
       </li><li class="listitem"><span class="emphasis"><em>enable</em></span>, activate buffer capture.
       </li></ul></div><p>
+
     </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="iiobuffersetup"></a> IIO buffer setup </h3></div></div></div><p>The meta information associated with a channel reading
         placed in a buffer is called a <span class="emphasis"><em> scan element </em></span>.
         The important bits configuring scan elements are exposed to
@@ -32,16 +33,17 @@
         data storage within the buffer and hence the form in which it is
         read from user space. Format is <span class="emphasis"><em>
         [be|le]:[s|u]bits/storagebitsXrepeat[&gt;&gt;shift] </em></span>.
-        <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><span class="emphasis"><em>be</em></span> or <span class="emphasis"><em>le</em></span> specifies
+        <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><span class="emphasis"><em>be</em></span> or <span class="emphasis"><em>le</em></span>, specifies
           big or little endian.
-        </li><li class="listitem"><span class="emphasis"><em>s </em></span>or <span class="emphasis"><em>u</em></span> specifies if
+        </li><li class="listitem"><span class="emphasis"><em>s </em></span>or <span class="emphasis"><em>u</em></span>, specifies if
           signed (2's complement) or unsigned.
-        </li><li class="listitem"><span class="emphasis"><em>bits</em></span> is the number of bits of data
-        </li><li class="listitem"><span class="emphasis"><em>storagebits</em></span> is the space (after padding)
-          that it occupies in the buffer.
-        </li><li class="listitem"><span class="emphasis"><em>shift</em></span> if specified, is the shift that needs
-          to be a applied prior to masking out unused bits
-        </li><li class="listitem"><span class="emphasis"><em>repeat</em></span>, specifies the number of real/storage bits
+        </li><li class="listitem"><span class="emphasis"><em>bits</em></span>, is the number of valid data
+          bits.
+        </li><li class="listitem"><span class="emphasis"><em>storagebits</em></span>, is the number of bits
+          (after padding) that it occupies in the buffer.
+        </li><li class="listitem"><span class="emphasis"><em>shift</em></span>, if specified, is the shift that needs
+          to be applied prior to masking out unused bits.
+        </li><li class="listitem"><span class="emphasis"><em>repeat</em></span>, specifies the number of bits/storagebits
         repetitions. When the repeat element is 0 or 1, then the repeat
         value is omitted.
         </li></ul></div></li></ul></div><p>
@@ -65,9 +67,9 @@
       $ cat /sys/bus/iio/devices/iio:device0/scan_elements/in_accel_y_type
       le:s12/16&gt;&gt;4
       </pre><p>
-      The userspace applications will interpret data samples read from buffer
-      as two byte little endian signed data, that needs a 4 bits right
-      shift before masking out the only 12 valid bits of real data.
+      A user space application will interpret data samples read from the
+      buffer as two byte little endian signed data, that needs a 4 bits
+      right shift before masking out the 12 valid bits of data.
     </p><p>
       For implementing buffer support a driver should initialize the following
       fields in <span class="type">iio_chan_spec</span> definition:
@@ -103,24 +105,16 @@
               .endianness = IIO_LE,
             },
         }
-        /* similar for Y and  Z axis */
+        /* similar for Y (with channel2 = IIO_MOD_Y, scan_index = 1)
+         * and Z (with channel2 = IIO_MOD_Z, scan_index = 2) axis
+         */
     }
     </pre><p>
     </p><p>
-    Here <span class="emphasis"><em> scan_index </em></span> defines the relative order in which
+    Here <span class="emphasis"><em> scan_index </em></span> defines the order in which
     the enabled channels are placed inside the buffer. Channels with a lower
     scan_index will be placed before channels with a higher index. Each
     channel needs to have a unique scan_index.
-    </p><p>
-    It is important to realize that the scan_index does not define the
-    absolute position in the buffer. E.g. a channel with the scan_index = 3
-    will not be at offset 3 bytes or 3 words, but rather will be placed in the
-    buffer after any channel with a scan_index lower than 3 and before
-    any channel with a scan_index larger than 3.
-    Furthermore the scan indices do not have to be consecutive. E.g. A
-    channel spec array that defines 3 channels with the indices 1, 2 and 3 is
-    just as valid as a channel spec that uses the indices 100, 200, 300. The
-    relative order of the channels will be the same.
     </p><p>
     Setting scan_index to -1 can be used to indicate that the specific
     channel does not support buffered capture. In this case no entries will

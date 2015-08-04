@@ -2,7 +2,7 @@
   Setup triggered buffer and pollfunc
  </p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="funcsynopsis"><table border="0" class="funcprototype-table" summary="Function synopsis" style="cellspacing: 0; cellpadding: 0;"><tr><td><code class="funcdef">int <b class="fsfunc">iio_triggered_buffer_setup </b>(</code></td><td>struct iio_dev * <var class="pdparam">indio_dev</var>, </td></tr><tr><td> </td><td>irqreturn_t (*<var class="pdparam">h</var>)
      <code>(</code>int irq, void *p<code>)</code>, </td></tr><tr><td> </td><td>irqreturn_t (*<var class="pdparam">thread</var>)
-     <code>(</code>int irq, void *p<code>)</code>, </td></tr><tr><td> </td><td>const struct iio_buffer_setup_ops * <var class="pdparam">setup_ops</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a name="idp55339248"></a><h2>Arguments</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><em class="parameter"><code>indio_dev</code></em></span></dt><dd><p>
+     <code>(</code>int irq, void *p<code>)</code>, </td></tr><tr><td> </td><td>const struct iio_buffer_setup_ops * <var class="pdparam">setup_ops</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer"> </div></div></div><div class="refsect1"><a name="idp55988912"></a><h2>Arguments</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><em class="parameter"><code>indio_dev</code></em></span></dt><dd><p>
      IIO device structure
     </p></dd><dt><span class="term"><em class="parameter"><code>h</code></em></span></dt><dd><p>
      Function which will be used as pollfunc top half
@@ -12,7 +12,7 @@
      Buffer setup functions to use for this device.
      If NULL the default setup functions for triggered
      buffers will be used.
-    </p></dd></dl></div></div><div class="refsect1"><a name="idp55348336"></a><h2>Description</h2><p>
+    </p></dd></dl></div></div><div class="refsect1"><a name="idp55998000"></a><h2>Description</h2><p>
    This function combines some common tasks which will normally be performed
    when setting up a triggered buffer. It will allocate the buffer and the
    pollfunc.
